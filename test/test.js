@@ -664,14 +664,19 @@ describe('local update overrides', () => {
 
 describe('npm install invocation', () => {
   it('builds a shell-safe Windows npm command for local tarballs', () => {
-    const tarballPath = 'C:\\Projects\\Elliptic\\free-model-router\\modelrelay-1.8.4.tgz'
+    const tarballPath = join(ROOT, 'modelrelay-1.8.4.tgz')
+    writeFileSync(tarballPath, 'placeholder', 'utf8')
 
-    withEnv({ MODELRELAY_UPDATE_TARBALL: tarballPath }, () => {
-      const invocation = buildNpmInstallInvocation('latest', 'win32')
-      assert.equal(invocation.command, 'npm')
-      assert.deepEqual(invocation.args, ['install', '-g', tarballPath])
-      assert.equal(invocation.shell, true)
-    })
+    try {
+      withEnv({ MODELRELAY_UPDATE_TARBALL: tarballPath }, () => {
+        const invocation = buildNpmInstallInvocation('latest', 'win32')
+        assert.equal(invocation.command, 'npm')
+        assert.deepEqual(invocation.args, ['install', '-g', tarballPath])
+        assert.equal(invocation.shell, true)
+      })
+    } finally {
+      rmSync(tarballPath, { force: true })
+    }
   })
 })
 
