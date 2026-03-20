@@ -7,6 +7,7 @@
 export const scores = {
   "arcee-ai/trinity-large-preview": 0.778,
   "arcee-ai/trinity-mini": 0.35,
+  "big-pickle": 0.68,
   "bytedance/seed-oss-36b-instruct": 0.38,
   "coder-model": 0.696,
   "codestral-latest": 0.58,
