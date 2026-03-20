@@ -335,6 +335,191 @@
       padding: 32px;
     }
 
+    #chat-view {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+    }
+
+    .chat-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 520px;
+    }
+
+    .chat-toolbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .chat-model-select {
+      min-width: 280px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: var(--text);
+      font-size: 0.84rem;
+      outline: none;
+    }
+
+    .chat-model-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .chat-transcript {
+      flex: 1;
+      min-height: 340px;
+      max-height: 62vh;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #faf9f8;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-empty {
+      margin: auto;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      max-width: 42ch;
+      line-height: 1.5;
+    }
+
+    .chat-msg {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px 12px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+
+    .chat-msg.user {
+      border-left: 3px solid var(--success);
+    }
+
+    .chat-msg.assistant {
+      border-left: 3px solid var(--accent);
+    }
+
+    .chat-msg.system {
+      border-left: 3px solid var(--warning);
+    }
+
+    .chat-msg-role {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .chat-msg-content {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.84rem;
+      line-height: 1.5;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: var(--text);
+    }
+
+    .chat-typing {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      padding: 6px 0 0 2px;
+    }
+
+    .chat-typing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      opacity: 0.3;
+      animation: chatTyping 1.2s infinite ease-in-out;
+    }
+
+    .chat-typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .chat-typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes chatTyping {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.25; }
+      40% { transform: translateY(-3px); opacity: 0.9; }
+    }
+
+    .chat-composer {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chat-input {
+      width: 100%;
+      min-height: 86px;
+      box-sizing: border-box;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.86rem;
+      line-height: 1.45;
+      font-family: inherit;
+      resize: vertical;
+      outline: none;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .chat-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .chat-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chat-status {
+      min-height: 1em;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .chat-status.error {
+      color: #b91c1c;
+    }
+
+    .chat-status.success {
+      color: #047857;
+    }
+
+    .chat-send-btn[disabled] {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
     .setup-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1282,6 +1467,7 @@
 
     <div class="tabs">
       <div class="tab active" id="tab-models" onclick="switchTab('models')">Live Telemetry</div>
+      <div class="tab" id="tab-chat" onclick="switchTab('chat')">Chat</div>
       <div class="tab" id="tab-logs" onclick="switchTab('logs')">Request Logs</div>
       <div class="tab" id="tab-settings" onclick="switchTab('settings')">Settings</div>
       <div class="tab" id="tab-setup" onclick="switchTab('setup')">Setup Instructions</div>
@@ -1468,6 +1654,41 @@
       </div>
     </div>
 
+    <div id="chat-view" style="display: none;">
+      <div class="chat-layout">
+        <div class="chat-toolbar">
+          <div>
+            <h2 style="margin: 0; font-size: 1.25rem;">Chat</h2>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <label for="chat-model-select" style="font-size:0.76rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">Model</label>
+            <select id="chat-model-select" class="chat-model-select" onchange="onChatModelChange()">
+              <option value="auto-fastest">Auto (Fastest Available)</option>
+            </select>
+            <button id="chat-clear-btn" class="btn" style="background: white; color: var(--text); border: 1px solid var(--border);" onclick="clearChat()">Clear Chat</button>
+          </div>
+        </div>
+        <div id="chat-transcript" class="chat-transcript">
+          <div class="chat-empty">
+            Start a conversation. Press Enter to send and Shift+Enter for a newline.
+          </div>
+        </div>
+        <div id="chat-typing-indicator" class="chat-typing" aria-live="polite">
+          <span>Assistant is thinking</span>
+          <span class="chat-typing-dot"></span>
+          <span class="chat-typing-dot"></span>
+          <span class="chat-typing-dot"></span>
+        </div>
+        <div class="chat-composer">
+          <textarea id="chat-input" class="chat-input" placeholder="Type your message..." onkeydown="handleChatInputKeydown(event)"></textarea>
+          <div class="chat-actions">
+            <div id="chat-status" class="chat-status"></div>
+            <button id="chat-send-btn" class="btn chat-send-btn" onclick="sendChatMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="setup-view" style="display: none;">
       <h2 style="margin-top: 0; font-size: 1.25rem;">Setup Instructions</h2>
       <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.875rem;">Configure OpenClaw and OpenCode
@@ -1580,6 +1801,11 @@
     let qwenOauthSessionId = null;
     let qwenOauthPollTimer = null;
     let filterRules = { minSweScore: null, excludedProviders: [] };
+    let chatMessages = [];
+    let chatInFlight = false;
+    let chatSelectedModel = 'auto-fastest';
+    const CHAT_STORAGE_KEY = 'modelrelay-chat-v1';
+    const CHAT_MODEL_STORAGE_KEY = 'modelrelay-chat-model-v1';
 
 
 
@@ -1588,6 +1814,7 @@
       document.getElementById(`tab-${tab}`).classList.add('active');
 
       document.getElementById('models-view').style.display = tab === 'models' ? 'block' : 'none';
+      document.getElementById('chat-view').style.display = tab === 'chat' ? 'block' : 'none';
       document.getElementById('logs-view').style.display = tab === 'logs' ? 'block' : 'none';
       document.getElementById('settings-view').style.display = tab === 'settings' ? 'block' : 'none';
       document.getElementById('setup-view').style.display = tab === 'setup' ? 'block' : 'none';
@@ -1596,6 +1823,9 @@
         loadSettings();
       } else if (tab === 'logs') {
         loadLogs();
+      } else if (tab === 'chat') {
+        renderChatTranscript();
+        scrollChatToBottom();
       }
     }
 
@@ -1638,6 +1868,8 @@
 
           return { ...m, qos: m.qos || 0, isRateLimited };
         });
+
+        updateChatModelOptions(allModels);
 
         // Populate Provider Checkboxes
         renderProviderFilterGroup(providers);
@@ -3084,6 +3316,265 @@
       }
     }
 
+    function loadChatState() {
+      try {
+        const rawMessages = sessionStorage.getItem(CHAT_STORAGE_KEY);
+        const parsedMessages = rawMessages ? JSON.parse(rawMessages) : [];
+        chatMessages = Array.isArray(parsedMessages)
+          ? parsedMessages
+            .filter(m => m && typeof m.role === 'string' && m.content != null)
+            .map(m => ({
+              role: String(m.role),
+              content: typeof m.content === 'string' ? m.content : formatMessageContent(m.content),
+              ts: typeof m.ts === 'string' ? m.ts : new Date().toISOString(),
+              model: typeof m.model === 'string' && m.model.trim() ? m.model.trim() : null
+            }))
+          : [];
+
+        const rawModel = sessionStorage.getItem(CHAT_MODEL_STORAGE_KEY);
+        chatSelectedModel = rawModel && typeof rawModel === 'string' ? rawModel : 'auto-fastest';
+      } catch {
+        chatMessages = [];
+        chatSelectedModel = 'auto-fastest';
+      }
+    }
+
+    function saveChatState() {
+      try {
+        sessionStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatMessages));
+        sessionStorage.setItem(CHAT_MODEL_STORAGE_KEY, chatSelectedModel || 'auto-fastest');
+      } catch {
+        // Ignore storage failures and keep chat in-memory.
+      }
+    }
+
+    function updateChatModelOptions(models = []) {
+      const select = document.getElementById('chat-model-select');
+      if (!select) return;
+
+      const previousSelection = chatSelectedModel || select.value || 'auto-fastest';
+      const options = [
+        { value: 'auto-fastest', label: 'Auto (Fastest Available)' },
+        ...models
+          .filter(m => m && m.modelId)
+          .sort((a, b) => (a.label || a.modelId).localeCompare(b.label || b.modelId))
+          .map(m => ({
+            value: m.modelId,
+            label: `${m.label || m.modelId} · ${m.providerKey}`
+          }))
+      ];
+
+      const deduped = [];
+      const seen = new Set();
+      for (const opt of options) {
+        if (seen.has(opt.value)) continue;
+        seen.add(opt.value);
+        deduped.push(opt);
+      }
+
+      select.innerHTML = deduped
+        .map(opt => `<option value="${escapeHtml(opt.value)}">${escapeHtml(opt.label)}</option>`)
+        .join('');
+
+      const hasPrevious = deduped.some(opt => opt.value === previousSelection);
+      chatSelectedModel = hasPrevious ? previousSelection : 'auto-fastest';
+      select.value = chatSelectedModel;
+      saveChatState();
+    }
+
+    function onChatModelChange() {
+      const select = document.getElementById('chat-model-select');
+      chatSelectedModel = (select && select.value) ? select.value : 'auto-fastest';
+      saveChatState();
+      setChatStatus(`Using model: ${chatSelectedModel}`, 'muted');
+    }
+
+    function setChatStatus(message, tone = 'muted') {
+      const statusEl = document.getElementById('chat-status');
+      if (!statusEl) return;
+      statusEl.className = `chat-status${tone === 'error' ? ' error' : tone === 'success' ? ' success' : ''}`;
+      statusEl.textContent = message || '';
+    }
+
+    function scrollChatToBottom() {
+      const transcript = document.getElementById('chat-transcript');
+      if (!transcript) return;
+      transcript.scrollTop = transcript.scrollHeight;
+    }
+
+    function renderChatTranscript() {
+      const transcript = document.getElementById('chat-transcript');
+      if (!transcript) return;
+
+      if (!chatMessages.length) {
+        transcript.innerHTML = `
+          <div class="chat-empty">
+            Start a conversation. Press Enter to send and Shift+Enter for a newline.
+          </div>
+        `;
+        return;
+      }
+
+      transcript.innerHTML = chatMessages.map(msg => {
+        const role = msg && msg.role ? String(msg.role) : 'assistant';
+        const roleClass = role === 'user' ? 'user' : role === 'system' ? 'system' : 'assistant';
+        const content = escapeHtml(formatMessageContent(msg && msg.content != null ? msg.content : ''));
+        const ts = msg && msg.ts ? new Date(msg.ts) : null;
+        const tsLabel = ts && !Number.isNaN(ts.getTime())
+          ? ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : '';
+        const modelLabel = msg && typeof msg.model === 'string' && msg.model.trim() ? msg.model.trim() : '';
+        const headerBits = [role];
+        if (tsLabel) headerBits.push(tsLabel);
+        if (role === 'assistant' && modelLabel) headerBits.push(modelLabel);
+
+        return `
+          <div class="chat-msg ${roleClass}">
+            <div class="chat-msg-role">${headerBits.map(part => escapeHtml(part)).join(' • ')}</div>
+            <div class="chat-msg-content">${content}</div>
+          </div>
+        `;
+      }).join('');
+
+      scrollChatToBottom();
+    }
+
+    function setChatInFlight(inFlight) {
+      chatInFlight = !!inFlight;
+
+      const sendBtn = document.getElementById('chat-send-btn');
+      const clearBtn = document.getElementById('chat-clear-btn');
+      const input = document.getElementById('chat-input');
+      const modelSelect = document.getElementById('chat-model-select');
+      const typing = document.getElementById('chat-typing-indicator');
+
+      if (sendBtn) {
+        sendBtn.disabled = chatInFlight;
+        sendBtn.textContent = chatInFlight ? 'Sending...' : 'Send';
+      }
+      if (clearBtn) clearBtn.disabled = chatInFlight;
+      if (input) input.disabled = chatInFlight;
+      if (modelSelect) modelSelect.disabled = chatInFlight;
+      if (typing) typing.style.display = chatInFlight ? 'flex' : 'none';
+    }
+
+    function handleChatInputKeydown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendChatMessage();
+      }
+    }
+
+    function clearChat() {
+      if (chatInFlight) return;
+      chatMessages = [];
+      saveChatState();
+      setChatStatus('Chat cleared. Starting fresh.', 'success');
+      renderChatTranscript();
+      const input = document.getElementById('chat-input');
+      if (input) input.focus();
+    }
+
+    function buildChatRequestMessages() {
+      return chatMessages
+        .filter(m => m && typeof m.role === 'string' && m.content != null)
+        .map(m => ({
+          role: String(m.role),
+          content: typeof m.content === 'string' ? m.content : formatMessageContent(m.content)
+        }));
+    }
+
+    function getAssistantTextFromResponse(data) {
+      const choice = data && Array.isArray(data.choices) ? data.choices[0] : null;
+      const message = choice && choice.message ? choice.message : null;
+      if (!message) return '';
+
+      if (typeof message.content === 'string' && message.content.trim() !== '') {
+        return message.content;
+      }
+
+      if (Array.isArray(message.content)) {
+        const joined = message.content.map(part => {
+          if (typeof part === 'string') return part;
+          if (part && part.type === 'text' && typeof part.text === 'string') return part.text;
+          return '';
+        }).filter(Boolean).join('\n');
+        if (joined.trim() !== '') return joined;
+      }
+
+      if (message.tool_calls) {
+        return JSON.stringify(message.tool_calls, null, 2);
+      }
+      if (message.function_call) {
+        return JSON.stringify(message.function_call, null, 2);
+      }
+
+      return '';
+    }
+
+    async function sendChatMessage() {
+      if (chatInFlight) return;
+      const input = document.getElementById('chat-input');
+      if (!input) return;
+
+      const content = input.value.replace(/\r\n/g, '\n').trim();
+      if (!content) {
+        setChatStatus('Type a message before sending.', 'error');
+        return;
+      }
+
+      const userMessage = { role: 'user', content, ts: new Date().toISOString() };
+      chatMessages.push(userMessage);
+      saveChatState();
+      renderChatTranscript();
+      input.value = '';
+      setChatStatus('');
+      setChatInFlight(true);
+
+      try {
+        const requestBody = {
+          model: chatSelectedModel || 'auto-fastest',
+          messages: buildChatRequestMessages()
+        };
+
+        const res = await fetch('/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody)
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          const errorMessage = data?.error?.message || data?.error || data?.message || `Chat request failed (${res.status}).`;
+          throw new Error(errorMessage);
+        }
+
+        const assistantText = getAssistantTextFromResponse(data);
+        if (!assistantText) {
+          throw new Error('The provider returned an empty assistant response.');
+        }
+
+        const responseModel = typeof data?.model === 'string' && data.model.trim() ? data.model.trim() : null;
+        chatMessages.push({ role: 'assistant', content: assistantText, ts: new Date().toISOString(), model: responseModel });
+        saveChatState();
+        renderChatTranscript();
+        setChatStatus('Response received.', 'success');
+      } catch (err) {
+        setChatStatus(err?.message || 'Failed to send message.', 'error');
+      } finally {
+        setChatInFlight(false);
+        if (input) input.focus();
+      }
+    }
+
+    function initializeChat() {
+      loadChatState();
+      updateChatModelOptions(allModels);
+      renderChatTranscript();
+      setChatInFlight(false);
+      setChatStatus('');
+    }
+
     async function loadLogs() {
       try {
         const res = await fetch('/api/logs');
@@ -3604,6 +4095,7 @@
       }
     }
 
+    initializeChat();
     setInterval(fetchData, 4000);
     fetchData();
   </script>
